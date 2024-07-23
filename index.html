@@ -1,0 +1,442 @@
+<html>
+
+<head>
+  <title>Coin Dilemma</title>
+  <style>
+    body {
+      font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    }
+
+    h1 {
+      margin-bottom: 0.2em;
+    }
+
+    h2 {
+      margin-bottom: 0.2em;
+      margin-top: 0.2em;
+    }
+
+    main {
+      display: flex;
+    }
+
+    aside {
+      min-width: 150px;
+    }
+
+    figure {
+      margin: 20px 10px;
+    }
+
+    aside select {
+      display: block;
+      margin-bottom: 8px;
+      margin-top: 2px;
+      width: 120px;
+      height: 30px;
+    }
+
+    button {
+      width: 120px;
+      height: 40px;
+      display: block;
+      margin-top: 10px;
+    }
+
+    .board {
+      border: 2px solid black;
+      width: fit-content;
+    }
+    .square {
+      height: 80px;
+      width: 80px;
+      border: 2px solid black;
+      display: inline-block;
+      padding: 0;
+      margin: 0;
+    }
+
+    .square.dark {
+      background-color: gray;
+    }
+
+    .square.key {
+      background-color: darkorange;
+    }
+
+    .square.guess {
+      background-color: lightblue;
+    }
+
+    .square.guess.right {
+      background-color: lightgreen;
+    }
+
+    .square.guess.wrong {
+      background-color: darkred;
+    }
+
+    .coin {
+      border: 1px solid black;
+      border-radius: 100%;
+      height: 60px;
+      width: 60px;
+      margin: 10px;
+      text-align: center;
+      user-select: none;
+      cursor: pointer;
+      background-color: gold;
+      background-size: 40px;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .coin.heads {
+      background-image: url("data:image/svg+xml,%3Csvg fill='%23000000' height='200px' width='200px' id='Capa_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 484.3 484.3' xml:space='preserve'%3E%3Cg id='SVGRepo_bgCarrier' stroke-width='0'%3E%3C/g%3E%3Cg id='SVGRepo_tracerCarrier' stroke-linecap='round' stroke-linejoin='round'%3E%3C/g%3E%3Cg id='SVGRepo_iconCarrier'%3E%3Cg%3E%3Cg%3E%3Cpath d='M262.198,0c-28.1,0-55.1,6.1-80.3,18c-32,14.9-59.1,38.4-78.4,68c-19.9,30.5-30.4,65.8-30.4,102.3V214l-34,65 c-6.5,12.5-6.8,25.3-0.8,35.3s17.5,15.7,31.6,15.7h3.2v51.1c0,27.7,22.5,50.2,50.2,50.2c0.7,0,1.3,0,2-0.1l34.9-5.2v35.1 c0,0.5,0,1.1,0.1,1.6c1,12.4,11,21.6,23.7,21.6l0,0c1.5,0,3-0.1,4.6-0.4l181.5-32.2c13.2-2.3,23.6-14.7,23.6-28.1v-101 c36.1-35.3,56.6-84,56.6-134.5C450.298,84.4,365.898,0,262.198,0z M370.998,306.8c-2.8,2.6-4.4,6.2-4.4,9.9v106.7 c-0.1,0.5-0.8,1.4-1.3,1.6l-178.2,31.5l-0.1-46.5c0-3.9-1.7-7.7-4.7-10.2c-2.5-2.1-5.6-3.3-8.8-3.3c-0.7,0-1.3,0-2,0.1l-49.3,7.3 c-12.4-0.5-22.3-10.7-22.3-23.2v-64.6c0-7.5-6-13.5-13.5-13.5h-16.5c-5.1,0-7.8-1.4-8.5-2.6s-0.8-4.3,1.6-8.8l35.6-67.9 c1-1.9,1.5-4.1,1.5-6.3v-29c0-62.4,36.6-119.6,93.2-145.9h0.1c21.5-10,44.7-15.1,68.8-15.1c88.8,0,161.1,72.3,161.1,161.1 C423.298,233.1,404.198,276.4,370.998,306.8z'%3E%3C/path%3E%3Cpath d='M147.898,202.6c-9.8,0-17.8,8-17.8,17.8s8,17.8,17.8,17.8s17.8-8,17.8-17.8S157.698,202.6,147.898,202.6z'%3E%3C/path%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .coin.tails {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg id='SVGRepo_bgCarrier' stroke-width='0'%3E%3C/g%3E%3Cg id='SVGRepo_tracerCarrier' stroke-linecap='round' stroke-linejoin='round'%3E%3C/g%3E%3Cg id='SVGRepo_iconCarrier'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M10.8321 1.24802C11.5779 0.917327 12.4221 0.917327 13.1679 1.24802L21.7995 5.0754C23.7751 5.95141 23.1703 9 21.0209 9H2.97906C0.829669 9 0.224891 5.9514 2.20047 5.0754L10.8321 1.24802ZM12.3893 3.12765C12.1407 3.01742 11.8593 3.01742 11.6107 3.12765L3.41076 6.76352C3.31198 6.80732 3.34324 6.95494 3.45129 6.95494H20.5487C20.6568 6.95494 20.688 6.80732 20.5892 6.76352L12.3893 3.12765Z' fill='%230F0F0F'%3E%3C/path%3E%3Cpath d='M2 22C2 21.4477 2.44772 21 3 21H21C21.5523 21 22 21.4477 22 22C22 22.5523 21.5523 23 21 23H3C2.44772 23 2 22.5523 2 22Z' fill='%230F0F0F'%3E%3C/path%3E%3Cpath d='M11 19C11 19.5523 11.4477 20 12 20C12.5523 20 13 19.5523 13 19V11C13 10.4477 12.5523 10 12 10C11.4477 10 11 10.4477 11 11V19Z' fill='%230F0F0F'%3E%3C/path%3E%3Cpath d='M6 20C5.44772 20 5 19.5523 5 19L5 11C5 10.4477 5.44771 10 6 10C6.55228 10 7 10.4477 7 11L7 19C7 19.5523 6.55229 20 6 20Z' fill='%230F0F0F'%3E%3C/path%3E%3Cpath d='M17 19C17 19.5523 17.4477 20 18 20C18.5523 20 19 19.5523 19 19V11C19 10.4477 18.5523 10 18 10C17.4477 10 17 10.4477 17 11V19Z' fill='%230F0F0F'%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .coin.flipped {
+      background-color: silver;
+    }
+
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Coin Dilemma Practice</h1>
+  </header>
+  <main>
+    <aside>
+      <h2>Board</h2>
+      <label>Grid Size</label>
+      <select id="gridSizeSelect">
+        <option value="1x2">1 x 2</option>
+        <option value="2x2" selected>2 x 2</option>
+        <option value="4x4">4 x 4</option>
+        <option value="8x8">8 x 8</option>
+      </select>
+      <h2>Players</h2>
+      <label>Jailer</label>
+      <select id="jailerType">
+        <option value="human">Human</option>
+        <option value="computer">Computer</option>
+      </select>
+      <label>First Prisoner</label>
+      <select id="prisoner1Type">
+        <option value="human">Human</option>
+        <option value="computer">Computer</option>
+      </select>
+      <label>Second Prisoner</label>
+      <select id="prisoner2Type">
+        <option value="human">Human</option>
+        <option value="computer">Computer</option>
+      </select>
+      <button id="beginButton" type="button">New Game</button>
+    </aside>
+    <section>
+      <h2>Current Player: <span id="currentPlayer">None</span></h2>
+      <div><strong>Instructions: </strong><span id="instructions">None</span></h4>
+        <button id="nextButton" type="button">Next</button>
+      <figure><div class="board"></div></figure>
+    </section>
+  </main>
+
+  <script>
+    const jailerTypeEl = document.querySelector('#jailerType');
+    const prisoner1TypeEl = document.querySelector('#prisoner1Type');
+    const prisoner2TypeEl = document.querySelector('#prisoner2Type');
+
+    const gridSizeSelectEl = document.querySelector('#gridSizeSelect');
+    const beginButtonEl = document.querySelector('#beginButton');
+    const currentPlayerEl = document.querySelector('#currentPlayer');
+    const instructionsEl = document.querySelector('#instructions');
+    const boardEl = document.querySelector('.board');
+    const nextButtonEl = document.querySelector('#nextButton');
+
+    const players = {
+      none: 'None',
+      jailer: 'Jailer',
+      prisoner1: 'First Prisoner',
+      prisoner2: 'Second Prisoner'
+    };
+
+    const instructions = {
+      none: 'Game has not started.',
+      setKey: 'Select which square will hide the key.',
+      setCoins: 'Change any coins, heads or tails.',
+      flipCoin: 'Choose which coin to flip for the other prisoner.',
+      findKey: 'Choose which square has the hidden key.',
+      win: 'The prisoners win! They are free to go.',
+      lose: 'The jailer won! Too bad for the prisoners!'
+    };
+
+    const coinSides = ['tails','heads'];
+
+    const state = {
+      players: {},
+      player: 'none',
+      move: 'none',
+      coins: [],
+      keyLoc: {},
+      flipLoc: {},
+      guessLoc: {},
+      nextEnabled: false
+    };
+
+    function createBoardDiv(...classes) {
+      let result = document.createElement('div');
+      classes.forEach(className => result.classList.add(className));
+      return result;
+    }
+
+    function initializeGame(rows, cols) {
+      state.coins = [];
+      state.keyLoc = {};
+      state.flipLoc = {};
+      state.guessLoc = {};
+
+      for(let row = 0; row < rows; row++) {
+        let coinRow = [];
+        for(let col = 0; col < cols; col++) {
+          let coin = Math.random() > 0.5 ? 0 : 1;
+          coinRow.push(coin);
+        }
+        state.coins.push(coinRow);
+      }
+
+      magicMath();
+    }
+
+    function render() {
+      currentPlayerEl.innerText = players[state.player];
+      instructionsEl.innerText = instructions[state.move];
+      nextButtonEl.disabled = !state.nextEnabled;
+
+      boardEl.innerHTML = "";
+      for(let row = 0; row < state.coins.length; row++) {
+        let rowEl = createBoardDiv('row');
+        for(let col = 0; col < state.coins[row].length; col++) {
+          let dark = (row + col + 1) % 2;
+          let isKeyLoc =
+            (state.keyLoc.row === row) &&
+            (state.keyLoc.col === col);
+          let isFlipLoc =
+            (state.flipLoc.row === row) &&
+            (state.flipLoc.col === col);
+          let isGuessLoc =
+            (state.guessLoc.row === row) &&
+            (state.guessLoc.col === col);
+            
+          let isPrisoner2 = state.player === 'prisoner2';
+          let isFinished = state.move === 'win' || state.move === 'lose';
+          let isWin = state.move === 'win';
+
+          let squareEl = 
+            (isFinished && isKeyLoc && isWin) ? createBoardDiv('square', 'guess', 'right') :
+            (isFinished && isGuessLoc && !isWin) ? createBoardDiv('square', 'guess', 'wrong') :
+            (isKeyLoc && !isPrisoner2) ? createBoardDiv('square', 'key') :
+            (isGuessLoc && isPrisoner2) ? createBoardDiv('square', 'guess') :
+            dark ? createBoardDiv('square','dark') :
+            createBoardDiv('square');
+
+          let coinIcon = coinSides[(state.coins[row][col] + isFlipLoc) % 2];
+          
+          let coinEl = 
+            (isFlipLoc && !isPrisoner2) ? createBoardDiv('coin', coinIcon, 'flipped') :
+            createBoardDiv('coin', coinIcon);
+
+          coinEl.addEventListener('click', () => handleCoinClick(row,col));
+          squareEl.appendChild(coinEl);
+          rowEl.appendChild(squareEl);
+        }
+        boardEl.appendChild(rowEl);
+      }
+    }
+
+    function handleCoinClick(row,col) {
+      state.nextEnabled = true;
+      switch(state.move) {
+        case 'setKey':
+          state.keyLoc = { row, col };
+          break;
+        case 'setCoins':
+          state.coins[row][col] = 
+          state.coins[row][col] ? 0 : 1;
+          break;
+        case 'flipCoin':
+          state.flipLoc = { row, col };
+          break;
+        case 'findKey':
+          state.guessLoc = { row, col };
+          break;
+      }
+      render();
+    }
+
+    function resetBoard() {
+      state.player = 'none';
+      state.move = 'none';
+      state.players = {
+        jailer: jailerTypeEl.value,
+        prisoner1: prisoner1TypeEl.value,
+        prisoner2: prisoner2TypeEl.value
+      };
+      switch(gridSizeSelectEl.value) {
+        case '1x2':
+          initializeGame(1,2);
+          break;
+        case '2x2':
+          initializeGame(2,2);
+          break;
+        case '4x4':
+          initializeGame(4,4);
+          break;
+        case '8x8':
+          initializeGame(8,8);
+          break;
+      }
+      nextMove();
+    }
+
+    function nextMove() {
+      state.nextEnabled = false;
+      switch(`${state.player}:${state.move}`) {
+        case 'none:none':
+          state.player = 'jailer';
+          state.move = 'setKey';
+          break;
+        case 'jailer:setKey':
+          state.move = 'setCoins';
+          state.nextEnabled = true;
+          break;
+        case 'jailer:setCoins':
+          state.player = 'prisoner1';
+          state.move = 'flipCoin';
+          break;
+        case 'prisoner1:flipCoin':
+          const { row, col } = state.flipLoc;
+          if(row !== undefined) {
+            state.coins[row][col] = (state.coins[row][col] + 1) % 2;
+          }
+          state.flipLoc = {};
+          state.player = 'prisoner2';
+          state.move = 'findKey';
+          break;
+        case 'prisoner2:findKey':
+          state.player = 'none';
+          state.move =
+            ((state.keyLoc.row === state.guessLoc.row) &&
+            (state.keyLoc.col === state.guessLoc.col)) ? 'win' : 'lose';
+          break;
+      }
+
+      if(state.players[state.player] === 'computer') {
+        console.log('computer player');
+        switch(state.player) {
+          case 'jailer':
+            doSetKey();
+            break;
+          case 'prisoner1':
+            doFlipCoin();
+            break;
+          case 'prisoner2':
+            doFindKey();
+            break;
+          }
+          setTimeout(nextMove, 0);
+          return;
+      }
+
+      render();
+    }
+
+    function doSetKey() {
+      state.keyLoc = {
+        row: Math.floor(Math.random() * state.coins.length),
+        col: Math.floor(Math.random() * state.coins[0].length)
+      };
+    }
+
+    function doFlipCoin() {
+      const rowCount = state.coins.length;
+      const colCount = state.coins[0].length;
+
+      for(let row = 0; row < rowCount; row++) {
+        for(let col = 0; col < colCount; col++) {
+          state.coins[row][col] = state.coins[row][col] ? 0 : 1;
+          let keyLoc = magicMath();
+          state.coins[row][col] = state.coins[row][col] ? 0 : 1;
+
+          if(keyLoc.row === state.keyLoc.row && keyLoc.col === state.keyLoc.col) {
+            state.flipLoc = { row, col };
+          }
+        }
+      }
+    }
+
+    function doFindKey() {
+      state.guessLoc = magicMath();
+    }
+
+    function magicMath() {
+      const rowCount = state.coins.length;
+      const colCount = state.coins[0].length;
+      
+      let rowParities = [];
+      let rowMask = rowCount / 2;
+      let rowResult = 0;
+      
+      while(rowMask >= 1) {
+        let parity = 1;
+        for(let row = 0; row < rowCount; row++) {
+          if(row & rowMask) {
+            continue;
+          }
+          for(let col = 0; col < colCount; col++) {
+            parity = (parity + state.coins[row][col]) % 2;
+          }
+        }
+        rowParities.push(parity);
+        rowResult += parity ? rowMask : 0;
+        rowMask = rowMask / 2;
+      }
+
+      let colParities = [];
+      let colMask = colCount / 2;
+      let colResult = 0;
+
+      while(colMask >= 1) {
+        let parity = 1;
+
+        for(let col = 0; col < colCount; col++) {
+          if(col & colMask) {
+            continue;
+          }
+          for(let row = 0; row < rowCount; row++) {
+            parity = (parity + state.coins[row][col]) % 2;
+          }
+        }
+
+        colParities.push(parity);
+        colResult += parity ? colMask : 0;
+        colMask = colMask / 2;
+      }
+
+      return ({
+        row: rowResult,
+        col: colResult
+      });
+    }
+
+    beginButtonEl.addEventListener('click', resetBoard);
+    nextButtonEl.addEventListener('click', nextMove);
+    resetBoard();
+  </script>
+</body>
+
+</html>
